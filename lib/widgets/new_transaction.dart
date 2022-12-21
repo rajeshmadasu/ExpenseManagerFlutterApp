@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 
-class NewTransaction extends StatelessWidget {
+class NewTransaction extends StatefulWidget {
   final Function addNewTransaction;
-  final textTitleContoller = TextEditingController();
-  final textAmountContoller = TextEditingController();
 
   NewTransaction(this.addNewTransaction, {super.key});
+
+  @override
+  State<NewTransaction> createState() => _NewTransactionState();
+}
+
+class _NewTransactionState extends State<NewTransaction> {
+  final textTitleContoller = TextEditingController();
+
+  final textAmountContoller = TextEditingController();
 
   void submitData() {
     String title = textTitleContoller.text;
@@ -14,7 +21,23 @@ class NewTransaction extends StatelessWidget {
     if (title.isEmpty || amount <= 0) {
       return;
     }
-    addNewTransaction(title, amount);
+    /**
+   * Flutter establishes a connection and gives us a special property inside of our state class.
+    It gives us this widget property and this refactoring step(from stateless to stateful class conversion) automatically added it.
+    With Widget Dot, you can access the properties and methods of your widget class inside of your state 
+    class.
+   */
+    widget.addNewTransaction(title, amount);
+
+    /**
+     * It's built into Flutter and it can do a lot of awesome stuff here.
+    We simply use its pop method to basically close the topmost screen that is displayed, and that is that
+    modal sheet if it's opened.So that closes that modal sheet by popping it off.
+     */
+    // special variable available here
+    //Context gives you access to the context related to your widget.
+
+    Navigator.of(context).pop();
   }
 
   @override
@@ -30,7 +53,6 @@ class NewTransaction extends StatelessWidget {
                 keyboardType: TextInputType.name,
                 decoration: InputDecoration(labelText: 'Title'),
                 controller: textTitleContoller,
-                onSubmitted: (_) => submitData(),
 
                 // onChanged: (value) {
                 //   titleInput = value;

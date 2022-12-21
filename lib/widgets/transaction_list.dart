@@ -11,48 +11,66 @@ class TransactionList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         height: 300,
-        child: ListView.builder(
-          itemBuilder: (context, index) {
-            return Card(
-              margin: const EdgeInsets.all(8),
-              child: Row(
+        child: transactions.isEmpty
+            ? Column(
                 children: [
-                  Container(
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 10.0, horizontal: 15.0),
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            color: Colors.purple,
-                            width: 2,
-                            style: BorderStyle.solid)),
-                    padding: const EdgeInsets.all(10.0),
-                    child: Text(
-                      '\$${transactions[index].amount.toStringAsFixed(2)}',
-                      style: const TextStyle(
-                          fontSize: 18,
-                          color: Colors.purple,
-                          fontWeight: FontWeight.bold),
-                    ),
+                  Text(
+                    'No transaction added yet!',
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(transactions[index].title,
-                          style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.start),
-                      Text(DateFormat.yMMMEd().format(transactions[index].date),
-                          style: const TextStyle(
-                              fontSize: 14, color: Colors.grey)),
-                    ],
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    height: 200,
+                    child: Image.asset(
+                      'assets/images/waiting.png',
+                      fit: BoxFit.cover,
+                    ),
                   )
                 ],
-              ),
-            );
-          },
-          itemCount: transactions.length,
-        ));
+              )
+            : ListView.builder(
+                itemBuilder: (context, index) {
+                  return Card(
+                    margin: const EdgeInsets.all(8),
+                    child: Row(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 15.0),
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Theme.of(context).primaryColor,
+                                  width: 2,
+                                  style: BorderStyle.solid)),
+                          padding: const EdgeInsets.all(10.0),
+                          child: Text(
+                            '\$${transactions[index].amount.toStringAsFixed(2)}',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(transactions[index].title,
+                                style: Theme.of(context).textTheme.titleMedium,
+                                textAlign: TextAlign.start),
+                            Text(
+                                DateFormat.yMMMEd()
+                                    .format(transactions[index].date),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleSmall
+                                    ?.merge(TextStyle(color: Colors.grey)))
+                          ],
+                        )
+                      ],
+                    ),
+                  );
+                },
+                itemCount: transactions.length,
+              ));
   }
 }
