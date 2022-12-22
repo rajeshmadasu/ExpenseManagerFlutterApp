@@ -10,9 +10,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-          primarySwatch: Colors.purple,
-          accentColor: Colors.amber,
+          colorScheme: ColorScheme.fromSwatch().copyWith(
+            secondary: Colors.green,
+          ),
           fontFamily: 'Quicksand',
           textTheme: ThemeData.light().textTheme.copyWith(
                 titleLarge: const TextStyle(
@@ -24,7 +26,7 @@ class MyApp extends StatelessWidget {
                     fontSize: 16,
                     fontWeight: FontWeight.bold),
                 titleSmall: const TextStyle(
-                    fontFamily: 'OpenSans', fontSize: 14, color: Colors.grey),
+                    fontFamily: 'OpenSans', fontSize: 12, color: Colors.grey),
               ),
           appBarTheme: const AppBarTheme(
               titleTextStyle: TextStyle(
@@ -44,11 +46,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _userTransactions = [
-    // Transaction(id: 'id1', title: 'Shoes', amount: 54.5, date: DateTime.now()),
-    // Transaction(id: 'id2', title: 'Shirts', amount: 77.5, date: DateTime.now()),
-    // Transaction(id: 'id3', title: 'Cake', amount: 44.5, date: DateTime.now()),
-    // Transaction(
-    //     id: 'id1', title: 'Groceries', amount: 200.5, date: DateTime.now()),
+    //Transaction(id: 'id1', title: 'Shoes', amount: 54.5, date: DateTime.now()),
+    //Transaction(id: 'id2', title: 'Shirts', amount: 77.5, date: DateTime.now()),
+    //Transaction(id: 'id3', title: 'Cake', amount: 44.5, date: DateTime.now()),
+    //Transaction(
+    //   id: 'id1', title: 'Groceries', amount: 200.5, date: DateTime.now()),
   ];
 
   List<Transaction> get _recentTransactions {

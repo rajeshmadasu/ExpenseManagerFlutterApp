@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class NewTransaction extends StatefulWidget {
   final Function addNewTransaction;
 
-  NewTransaction(this.addNewTransaction, {super.key});
+  const NewTransaction(this.addNewTransaction, {super.key});
 
   @override
   State<NewTransaction> createState() => _NewTransactionState();
@@ -51,7 +51,7 @@ class _NewTransactionState extends State<NewTransaction> {
             children: [
               TextField(
                 keyboardType: TextInputType.name,
-                decoration: InputDecoration(labelText: 'Title'),
+                decoration: const InputDecoration(labelText: 'Title'),
                 controller: textTitleContoller,
 
                 // onChanged: (value) {
@@ -62,7 +62,7 @@ class _NewTransactionState extends State<NewTransaction> {
                 controller: textAmountContoller,
                 //onChanged: (value) => {amountInput = value},
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: 'Amount'),
+                decoration: const InputDecoration(labelText: 'Amount'),
                 onSubmitted: (_) => submitData(),
               ),
               TextButton(

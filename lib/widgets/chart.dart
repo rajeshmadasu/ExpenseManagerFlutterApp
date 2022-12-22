@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import '../models/transaction.dart';
 import 'package:intl/intl.dart';
@@ -36,20 +34,25 @@ class Chart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(groupTransactionValues);
     return Card(
       elevation: 6,
-      margin: EdgeInsets.all(20),
-      child: Row(
-        children: groupTransactionValues.map((data) {
-          return ChartBar(
-              label: data['day'] as String,
-              spendingAmount: data['amount'] as double,
-              spendingPercentageTotal:
-                  (data['amount'] as double) / totalSpending);
-
-          Text(': ');
-        }).toList(),
+      margin: const EdgeInsets.all(20),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: groupTransactionValues.map((data) {
+            return Flexible(
+              fit: FlexFit.tight,
+              child: ChartBar(
+                  label: data['day'] as String,
+                  spendingAmount: data['amount'] as double,
+                  spendingPercentageTotal: totalSpending == 0.0
+                      ? 0.0
+                      : (data['amount'] as double) / totalSpending),
+            );
+          }).toList(),
+        ),
       ),
     );
   }
