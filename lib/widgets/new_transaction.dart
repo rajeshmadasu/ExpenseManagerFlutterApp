@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
 class NewTransaction extends StatefulWidget {
@@ -10,15 +11,37 @@ class NewTransaction extends StatefulWidget {
 }
 
 class _NewTransactionState extends State<NewTransaction> {
-  final textTitleContoller = TextEditingController();
+  final _textTitleContoller = TextEditingController();
 
-  final textAmountContoller = TextEditingController();
+  final _textAmountContoller = TextEditingController();
 
-  void submitData() {
-    String title = textTitleContoller.text;
-    double amount = double.parse(textAmountContoller.text);
+  DateTime? _selectedDate;
 
-    if (title.isEmpty || amount <= 0) {
+  void _presentDatePicker() {
+    showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(2019),
+            lastDate: DateTime.now())
+        .then((pickedDate) {
+      if (pickedDate == null) {
+        return;
+      }
+      setState(() {
+        _selectedDate = pickedDate;
+      });
+    });
+    print('....');
+  }
+
+  void _submitData() {
+    if (_textAmountContoller.text.isEmpty) {
+      return;
+    }
+    String title = _textTitleContoller.text;
+    double amount = double.parse(_textAmountContoller.text);
+
+    if (title.isEmpty || amount <= 0 || _selectedDate == null) {
       return;
     }
     /**
@@ -27,7 +50,7 @@ class _NewTransactionState extends State<NewTransaction> {
     With Widget Dot, you can access the properties and methods of your widget class inside of your state 
     class.
    */
-    widget.addNewTransaction(title, amount);
+    widget.addNewTransaction(title, amount, _selectedDate);
 
     /**
      * It's built into Flutter and it can do a lot of awesome stuff here.
@@ -42,39 +65,62 @@ class _NewTransactionState extends State<NewTransaction> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-        elevation: 5,
-        child: Container(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              TextField(
-                keyboardType: TextInputType.name,
-                decoration: const InputDecoration(labelText: 'Title'),
-                controller: textTitleContoller,
+    return SingleChildScrollView(
+        child: Card(
+            elevation: 5,
+            child: Container(
+              padding: EdgeInsets.only(
+                  top: 10,
+                  left: 10,
+                  right: 10,
+                  bottom: MediaQuery.of(context).viewInsets.bottom + 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  TextField(
+                    keyboardType: TextInputType.name,
+                    decoration: const InputDecoration(labelText: 'Title'),
+                    controller: _textTitleContoller,
 
-                // onChanged: (value) {
-                //   titleInput = value;
-                // },
+                    // onChanged: (value) {
+                    //   titleInput = value;
+                    // },
+                  ),
+                  TextField(
+                    controller: _textAmountContoller,
+                    //onChanged: (value) => {amountInput = value},
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(labelText: 'Amount'),
+                    onSubmitted: (_) => _submitData(),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                            child: Text(_selectedDate == null
+                                ? 'No Date Selected!'
+                                : 'Picked Date: ${DateFormat.yMd().format(_selectedDate!)}')),
+                        TextButton(
+                          onPressed: _presentDatePicker,
+                          child: Text(
+                            'Choose Date',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  ElevatedButton(
+                      onPressed: () => {
+                            //print('$titleInput' + '-' + '$amountInput')
+                            _submitData()
+                          },
+                      child: const Text(
+                        'Add Transaction',
+                      ))
+                ],
               ),
-              TextField(
-                controller: textAmountContoller,
-                //onChanged: (value) => {amountInput = value},
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Amount'),
-                onSubmitted: (_) => submitData(),
-              ),
-              TextButton(
-                  onPressed: () => {
-                        //print('$titleInput' + '-' + '$amountInput')
-                        submitData()
-                      },
-                  child: const Text(
-                    'Add Transaction',
-                  ))
-            ],
-          ),
-        ));
+            )));
   }
 }

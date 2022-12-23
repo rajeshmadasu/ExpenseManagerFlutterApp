@@ -4,47 +4,48 @@ import 'package:intl/intl.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Transaction> transactions;
-
-  TransactionList(this.transactions);
+  final Function deleteTx;
+  TransactionList(this.transactions, this.deleteTx);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        height: 300,
-        child: transactions.isEmpty
-            ? Column(
-                children: [
-                  Text(
-                    'No transaction added yet!',
-                    style: Theme.of(context).textTheme.titleMedium,
+    return transactions.isEmpty
+        ? LayoutBuilder(builder: (ctx, contraints) {
+            return Column(
+              children: [
+                Text(
+                  'No transaction added yet!',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  height: contraints.maxHeight * 0.60,
+                  child: Image.asset(
+                    'assets/images/waiting.png',
+                    fit: BoxFit.cover,
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Container(
-                    alignment: Alignment.center,
-                    height: 200,
-                    child: Image.asset(
-                      'assets/images/waiting.png',
-                      fit: BoxFit.cover,
-                    ),
-                  )
-                ],
-              )
-            : ListView.builder(
-                itemBuilder: (context, index) {
-                  return getListChildView(context, index);
-                },
-                itemCount: transactions.length,
-              ));
+                )
+              ],
+            );
+          })
+        : ListView.builder(
+            itemBuilder: (context, index) {
+              return getListChildView(context, index);
+            },
+            itemCount: transactions.length,
+          );
   }
 
   Card getListChildView(BuildContext context, int index) {
     return Card(
         elevation: 5,
-        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
         child: ListTile(
           leading: CircleAvatar(
+            backgroundColor: Theme.of(context).colorScheme.primary,
             radius: 30,
             child: Padding(
               padding: const EdgeInsets.all(6.0),
@@ -56,6 +57,17 @@ class TransactionList extends StatelessWidget {
             style: Theme.of(context).textTheme.titleMedium,
           ),
           subtitle: Text(DateFormat.yMMMEd().format(transactions[index].date)),
+          trailing: MediaQuery.of(context).size.width > 460
+              ? TextButton.icon(
+                  label: const Text('Delete'),
+                  icon: const Icon(Icons.delete),
+                  onPressed: () => deleteTx(transactions[index].id),
+                )
+              : IconButton(
+                  onPressed: () => deleteTx(transactions[index].id),
+                  icon: Icon(Icons.delete),
+                  color: Theme.of(context).errorColor,
+                ),
         ));
   }
 
