@@ -110,42 +110,101 @@ class _MyHomePageState extends State<MyHomePage> {
         });
   }
 
+  List<Widget> _buildLandScapeContent(MediaQueryData mediaQuery,
+      PreferredSizeWidget appBar, Widget txListWidget) {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          const Text('Show Chart'),
+          Switch.adaptive(
+            activeColor: Theme.of(context).buttonTheme.colorScheme?.secondary,
+            value: _showChart,
+            onChanged: (value) {
+              setState(() {
+                _showChart = value;
+              });
+            },
+          )
+        ],
+      ),
+      _showChart
+          ? Container(
+              height: (mediaQuery.size.height -
+                      appBar.preferredSize.height -
+                      mediaQuery.padding.top) *
+                  0.7,
+              child: Chart(
+                recentTransactions: _recentTransactions,
+              ),
+            )
+          : txListWidget
+    ];
+  }
+
+  List<Widget> _buildProtraitContent(MediaQueryData mediaQuery,
+      PreferredSizeWidget appBar, Widget txListWidget) {
+    return [
+      Container(
+        height: (mediaQuery.size.height -
+                appBar.preferredSize.height -
+                mediaQuery.padding.top) *
+            0.3,
+        child: Chart(
+          recentTransactions: _recentTransactions,
+        ),
+      ),
+      txListWidget
+    ];
+  }
+
+  Widget _buildCupertinoAppBar() {
+    return CupertinoNavigationBar(
+      middle: Text(
+        'Expense App',
+        style: Theme.of(context).appBarTheme.titleTextStyle,
+      ),
+      trailing: Row(
+        // important, else Row will take whole space and Text in middle attribute will not be visible
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            onTap: () {
+              _startModalBottomSheet(context);
+            },
+            child: const Icon(CupertinoIcons.add),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMaterialAppBar() {
+    return AppBar(
+      // by creating appbar variable, we can access contraints of appbar
+      title: Text(
+        'Expense App',
+        style: Theme.of(context).appBarTheme.titleTextStyle,
+      ),
+      actions: [
+        IconButton(
+            onPressed: () {
+              _startModalBottomSheet(context);
+            },
+            icon: const Icon(Icons.add))
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final isLandscape = mediaQuery.orientation == Orientation.landscape;
 
-    final PreferredSizeWidget appBar = Platform.isIOS
-        ? CupertinoNavigationBar(
-            middle: Text('Expense Manager'),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                    onPressed: () {
-                      _startModalBottomSheet(context);
-                    },
-                    icon: Icon(Icons.add))
-              ],
-            ),
-          )
-        : PreferredSize(
-            preferredSize: Size(mediaQuery.size.width, 70),
-            child: AppBar(
-              title: const Text(
-                'Expense Manager',
-                style: TextStyle(fontFamily: 'Quicksand'),
-              ),
-              actions: <Widget>[
-                IconButton(
-                    onPressed: () {
-                      _startModalBottomSheet(context);
-                    },
-                    icon: Icon(Icons.add))
-              ],
-            ));
-
-    final transactionListWidget = Container(
+    final PreferredSizeWidget appBar = (Platform.isIOS
+        ? _buildCupertinoAppBar()
+        : _buildMaterialAppBar()) as PreferredSizeWidget;
+    final txListWidget = Container(
         height: (mediaQuery.size.height -
                 appBar.preferredSize.height -
                 mediaQuery.padding.top) *
@@ -158,53 +217,18 @@ class _MyHomePageState extends State<MyHomePage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
           if (isLandscape)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                const Text('Show Chart'),
-                Switch.adaptive(
-                  activeColor:
-                      Theme.of(context).buttonTheme.colorScheme?.secondary,
-                  value: _showChart,
-                  onChanged: (value) {
-                    setState(() {
-                      _showChart = value;
-                    });
-                  },
-                )
-              ],
-            ),
+            ..._buildLandScapeContent(mediaQuery, appBar, txListWidget),
           if (!isLandscape)
-            Container(
-              height: (mediaQuery.size.height -
-                      appBar.preferredSize.height -
-                      mediaQuery.padding.top) *
-                  0.3,
-              child: Chart(
-                recentTransactions: _recentTransactions,
-              ),
-            ),
-          if (!isLandscape) transactionListWidget,
-          if (isLandscape)
-            _showChart
-                ? Container(
-                    height: (mediaQuery.size.height -
-                            appBar.preferredSize.height -
-                            mediaQuery.padding.top) *
-                        0.7,
-                    child: Chart(
-                      recentTransactions: _recentTransactions,
-                    ),
-                  )
-                : transactionListWidget
+            ..._buildProtraitContent(mediaQuery, appBar, txListWidget),
         ]));
     Scaffold getAndroidView(
         PreferredSizeWidget appBar,
         bool isLandscape,
         MediaQueryData mediaQuery,
-        Container transactionListWidget,
+        Container txListWidget,
         SingleChildScrollView pageBody) {
       return Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: appBar,
         body: pageBody,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -218,6 +242,6 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     return getAndroidView(
-        appBar, isLandscape, mediaQuery, transactionListWidget, pageBody);
+        appBar, isLandscape, mediaQuery, txListWidget, pageBody);
   }
 }

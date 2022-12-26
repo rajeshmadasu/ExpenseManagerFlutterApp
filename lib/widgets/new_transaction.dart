@@ -4,10 +4,15 @@ import 'package:flutter/material.dart';
 class NewTransaction extends StatefulWidget {
   final Function addNewTransaction;
 
-  const NewTransaction(this.addNewTransaction, {super.key});
+  NewTransaction(this.addNewTransaction, {super.key}) {
+    print('Constructor NewTransaction Widget');
+  }
 
   @override
-  State<NewTransaction> createState() => _NewTransactionState();
+  State<NewTransaction> createState() {
+    print('createState NewTransaction Widget');
+    return _NewTransactionState();
+  }
 }
 
 class _NewTransactionState extends State<NewTransaction> {
@@ -16,6 +21,28 @@ class _NewTransactionState extends State<NewTransaction> {
   final _textAmountContoller = TextEditingController();
 
   DateTime? _selectedDate;
+
+  _NewTransactionState() {
+    print('Constructor NewTransaction State');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    print('initState()');
+  }
+
+  @override
+  void didUpdateWidget(covariant NewTransaction oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    print('didUpdateWidget()');
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    print('dispose()');
+  }
 
   void _presentDatePicker() {
     showDatePicker(
